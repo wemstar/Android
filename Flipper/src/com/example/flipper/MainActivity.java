@@ -45,7 +45,7 @@ public class MainActivity extends Activity implements OnGestureListener,GestureD
 	private Animation animdownin=null;
 	private Animation animdownout=null;
 	
-	private boolean isDatagMode=false;
+	private boolean isDaragMode=false;
 	private int currentview=0;
 	
 	
@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements OnGestureListener,GestureD
 	}
 
 	private void setViewText() {
-		String text=getString(isDatagMode?R.string.app_info_drag: R.string.app_info_flip);
+		String text=getString(isDaragMode?R.string.app_info_drag: R.string.app_info_flip);
 		for(int index=0;index<views.size();++index)
 		{
 			views.get(index).setText(text);
@@ -127,7 +127,7 @@ public class MainActivity extends Activity implements OnGestureListener,GestureD
 		animdownin=new TranslateAnimation(Animation.RELATIVE_TO_PARENT, +0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
 				Animation.RELATIVE_TO_PARENT,-1.0f,Animation.RELATIVE_TO_PARENT,0.0f);
 		
-		animleftin=new TranslateAnimation(Animation.RELATIVE_TO_PARENT, +0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
+		animdownout=new TranslateAnimation(Animation.RELATIVE_TO_PARENT, +0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
 				Animation.RELATIVE_TO_PARENT,+0.0f,Animation.RELATIVE_TO_PARENT,+1.0f);
 		
 		animleftin.setDuration(1000);
@@ -165,7 +165,7 @@ public class MainActivity extends Activity implements OnGestureListener,GestureD
 
 	@Override
 	public boolean onDoubleTap(MotionEvent arg0) {
-		// TODO Auto-generated method stub
+		flipper.scrollTo(0, 0);
 		return false;
 	}
 
@@ -190,37 +190,104 @@ public class MainActivity extends Activity implements OnGestureListener,GestureD
 	@Override
 	public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX,
 			float velocityY) {
-		if(isDatagMode)
+		if(isDaragMode)
 		{
 			return false;
 		}
 		
 		final float ev1x=event1.getX();
+		final float ev1y=event1.getY();
+		final float ev2x=event2.getX();
+		final float ev2y=event2.getY();
+		
+		final float xdiff=Math.abs(ev1x-ev2x);
+		final float ydiff=Math.abs(ev2y-ev1y);
+		
+		final float xvelocity=Math.abs(velocityX);
+		final float yvelocity=Math.abs(velocityY);
+		
+		if(xvelocity > this.SWIPE_MIN_VELOCITY && xdiff > this.SWIPE_MIN_DISTANCE)
+		{
+			if(ev1x>ev2x)
+			{
+				--currentview;
+				
+				if(currentview < 0){currentview = views.size()-1;}
+				
+				flipper.setInAnimation(animleftin);
+				flipper.setOutAnimation(animleftout);
+			}
+			else
+			{
+				++currentview;
+				if(currentview >= views.size())currentview=0;
+				
+				flipper.setInAnimation(animrightin);
+				flipper.setOutAnimation(animrightout);
+			}
+			
+			flipper.scrollTo(0,0);
+			flipper.setDisplayedChild(currentview);
+		}
+		else if(yvelocity > this.SWIPE_MIN_VELOCITY && ydiff > this.SWIPE_MIN_DISTANCE)
+		{
+			if(ev1y > ev2y)
+			{
+				--currentview;
+				if(currentview < 0)
+				{
+					currentview=views.size()-1;
+				}
+				flipper.setInAnimation(animupin);
+				flipper.setOutAnimation(animupout);
+			}
+			else
+			{
+				++currentview;
+				
+				if(currentview >=views.size())currentview=0;
+				
+				flipper.setInAnimation(animdownin);
+				flipper.setOutAnimation(animdownout);
+			}
+			flipper.scrollTo(0, 0);
+			flipper.setDisplayedChild(currentview);
+		}
+		
+		
 		return false;
 	}
 
 	@Override
 	public void onLongPress(MotionEvent arg0) {
-		// TODO Auto-generated method stub
+		
+		vibrator.vibrate(200);
+		flipper.scrollTo(0, 0);
+		
+		isDaragMode=!isDaragMode;
+		
+		setViewText();
+		
 		
 	}
 
 	@Override
-	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,
-			float arg3) {
-		// TODO Auto-generated method stub
+	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+			float distanceY) {
+		if(isDaragMode)flipper.scrollBy((int)distanceX,(int)distanceY);
+		
 		return false;
 	}
 
 	@Override
 	public void onShowPress(MotionEvent arg0) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public boolean onSingleTapUp(MotionEvent arg0) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 	@Override

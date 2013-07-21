@@ -4,5 +4,7 @@
     <string name="app_name">Flipper</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="app_info_drag"> GestureDetector sample </string>
+    <string name="app_info_flip"> GestureDetector sample </string>
 
 </resources>
