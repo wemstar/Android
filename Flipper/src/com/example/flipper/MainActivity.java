@@ -130,6 +130,7 @@ public class MainActivity extends Activity implements OnGestureListener,GestureD
 		animdownout=new TranslateAnimation(Animation.RELATIVE_TO_PARENT, +0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
 				Animation.RELATIVE_TO_PARENT,+0.0f,Animation.RELATIVE_TO_PARENT,+1.0f);
 		
+		
 		animleftin.setDuration(1000);
 		animleftin.setInterpolator(new OvershootInterpolator());
 		animleftout.setDuration(1000);
